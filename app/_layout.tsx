@@ -33,8 +33,15 @@ export default function RootLayout() {
         headerShown: false,
         animation: 'slide_from_right',
       }}>
+        <Stack.Screen name="index" />
         <Stack.Screen name="onboarding/welcome" />
+        <Stack.Screen name="onboarding/gender" />
         <Stack.Screen name="onboarding/age" />
+        <Stack.Screen name="onboarding/measurements" />
+        <Stack.Screen name="onboarding/level" />
+        <Stack.Screen name="onboarding/position" />
+        <Stack.Screen name="onboarding/injury" />
+        <Stack.Screen name="onboarding/activity" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
