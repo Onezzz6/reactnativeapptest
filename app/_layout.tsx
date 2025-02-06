@@ -1,49 +1,18 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import { OnboardingProvider } from '../context/OnboardingContext';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <OnboardingProvider>
       <Stack screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
       }}>
         <Stack.Screen name="index" />
-        <Stack.Screen name="onboarding/welcome" />
-        <Stack.Screen name="onboarding/gender" />
-        <Stack.Screen name="onboarding/age" />
-        <Stack.Screen name="onboarding/measurements" />
-        <Stack.Screen name="onboarding/level" />
-        <Stack.Screen name="onboarding/position" />
-        <Stack.Screen name="onboarding/injury" />
-        <Stack.Screen name="onboarding/activity" />
+        <Stack.Screen name="(onboarding)" />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      <StatusBar style="light" />
+    </OnboardingProvider>
   );
 }
