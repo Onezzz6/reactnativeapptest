@@ -65,8 +65,6 @@ export default function TabLayout() {
         name="profile"
         options={{
           href: null,
-          headerShown: false,
-          tabBarStyle: { display: 'none' },
         }}
       />
     </Tabs>

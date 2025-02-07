@@ -19,6 +19,10 @@ export default function HomeScreen() {
     router.push('/add-meal');
   };
 
+  const handleProfile = () => {
+    router.push('/(tabs)/profile');
+  };
+
   const handleCompleteTraining = () => {
     // Add your training completion logic here
     console.log('Training completed');
@@ -28,6 +32,12 @@ export default function HomeScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Dashboard</Text>
+        <TouchableOpacity 
+          style={styles.profileButton}
+          onPress={handleProfile}
+        >
+          <Ionicons name="person-circle-outline" size={32} color="white" />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.indicators}>
@@ -125,11 +135,22 @@ const styles = StyleSheet.create({
   header: {
     padding: 16,
     paddingTop: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     color: 'white',
+  },
+  profileButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   indicators: {
     padding: 16,
