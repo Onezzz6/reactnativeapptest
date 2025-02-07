@@ -48,6 +48,20 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="add-meal"
+        options={{
+          title: 'Add Meal',
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="recovery"
+        options={{
+          title: 'Recovery',
+          tabBarIcon: ({ color }) => <Ionicons name="fitness-outline" size={24} color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

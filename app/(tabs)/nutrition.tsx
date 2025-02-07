@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 type MacroGoal = {
   current: number;
@@ -8,6 +9,8 @@ type MacroGoal = {
 };
 
 export default function NutritionScreen() {
+  const router = useRouter();
+
   // These would typically come from user's profile/settings
   const calorieGoal = 3560;
   const macros = {
@@ -21,7 +24,7 @@ export default function NutritionScreen() {
   const remainingCalories = calorieGoal - foodCalories + exerciseCalories;
 
   const handleAddMeal = () => {
-    // TODO: Navigate to meal input screen
+    router.push('/(tabs)/add-meal');
   };
 
   return (
