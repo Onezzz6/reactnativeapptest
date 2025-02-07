@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useOnboarding } from '../../context/OnboardingContext';
 
 const ACTIVITY_LEVELS = [
   { 
@@ -31,10 +32,11 @@ const ACTIVITY_LEVELS = [
 
 export default function ActivityScreen() {
   const router = useRouter();
+  const { updateOnboardingData } = useOnboarding();
 
   const handleSelect = (activityLevel: string) => {
-    // Store activity level in state if needed
-    router.push('/(onboarding)/paywall');
+    updateOnboardingData({ activityLevel });
+    router.push('/(onboarding)/motivation');
   };
 
   return (

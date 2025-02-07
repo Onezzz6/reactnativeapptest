@@ -41,6 +41,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Ionicons name="restaurant-outline" size={24} color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="create-plan"
+        options={{
+          title: 'Create Plan',
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

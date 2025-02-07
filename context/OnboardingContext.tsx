@@ -11,6 +11,7 @@ type OnboardingData = {
   position?: string;
   injuryHistory?: string;
   activityLevel?: string;
+  motivation?: string;
 };
 
 type OnboardingContextType = {
