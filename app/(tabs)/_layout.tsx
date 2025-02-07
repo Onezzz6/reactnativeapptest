@@ -42,24 +42,31 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="recovery"
+        options={{
+          title: 'Recovery',
+          tabBarIcon: ({ color }) => <Ionicons name="fitness-outline" size={24} color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
         name="create-plan"
         options={{
-          title: 'Create Plan',
           href: null,
         }}
       />
       <Tabs.Screen
         name="add-meal"
         options={{
-          title: 'Add Meal',
           href: null,
         }}
       />
       <Tabs.Screen
-        name="recovery"
+        name="profile"
         options={{
-          title: 'Recovery',
-          tabBarIcon: ({ color }) => <Ionicons name="fitness-outline" size={24} color={color} />,
+          href: null,
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
         }}
       />
     </Tabs>

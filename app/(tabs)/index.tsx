@@ -1,59 +1,119 @@
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import CircularProgress from 'react-native-circular-progress-indicator';
+import { Calendar } from 'react-native-calendars';
 
 export default function HomeScreen() {
+  const router = useRouter();
+  
+  // Example data - replace with real data from your context/state
+  const nutritionData = {
+    currentCalories: 1200,
+    targetCalories: 2500,
+  };
+
+  const recoveryScore = 85; // 0-100 score based on sleep, soreness, etc.
+
+  const handleAddMeal = () => {
+    router.push('/add-meal');
+  };
+
+  const handleCompleteTraining = () => {
+    // Add your training completion logic here
+    console.log('Training completed');
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Welcome to BallerAI</Text>
-
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Ionicons name="pulse" size={24} color="#4FC3F7" />
-          <Text style={styles.cardTitle}>Training Progress</Text>
-        </View>
-        <Text style={[styles.metric, styles.blueMetric]}>0</Text>
-        <Text style={styles.metricLabel}>Completed this week</Text>
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Dashboard</Text>
       </View>
 
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Ionicons name="trending-up" size={24} color="#4CAF50" />
-          <Text style={styles.cardTitle}>Average Intensity</Text>
+      <View style={styles.indicators}>
+        {/* Calorie Indicator */}
+        <View style={styles.indicatorCard}>
+          <Text style={styles.indicatorTitle}>Calories</Text>
+          <CircularProgress
+            value={nutritionData.currentCalories}
+            maxValue={nutritionData.targetCalories}
+            radius={50}
+            duration={2000}
+            progressValueColor={'#fff'}
+            activeStrokeColor={'#304FFE'}
+            inActiveStrokeColor={'rgba(255, 255, 255, 0.2)'}
+            inActiveStrokeOpacity={0.5}
+            inActiveStrokeWidth={6}
+            activeStrokeWidth={12}
+            title={'kcal'}
+            titleColor={'rgba(255, 255, 255, 0.6)'}
+            titleStyle={{ fontSize: 12 }}
+          />
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={handleAddMeal}
+          >
+            <Ionicons name="add-circle" size={20} color="#4FC3F7" />
+            <Text style={styles.addButtonText}>Add Meal</Text>
+          </TouchableOpacity>
         </View>
-        <Text style={[styles.metric, styles.greenMetric]}>0.0</Text>
-        <Text style={styles.metricLabel}>Out of 10</Text>
+
+        {/* Recovery Score */}
+        <View style={styles.indicatorCard}>
+          <Text style={styles.indicatorTitle}>Recovery</Text>
+          <CircularProgress
+            value={recoveryScore}
+            maxValue={100}
+            radius={50}
+            duration={2000}
+            progressValueColor={'#fff'}
+            activeStrokeColor={'#4CAF50'}
+            inActiveStrokeColor={'rgba(255, 255, 255, 0.2)'}
+            inActiveStrokeOpacity={0.5}
+            inActiveStrokeWidth={6}
+            activeStrokeWidth={12}
+            title={'score'}
+            titleColor={'rgba(255, 255, 255, 0.6)'}
+            titleStyle={{ fontSize: 12 }}
+          />
+        </View>
+
+        {/* Training Card */}
+        <View style={styles.trainingCard}>
+          <Text style={styles.indicatorTitle}>Today's Training</Text>
+          <Text style={styles.trainingText}>Lower Body Strength</Text>
+          <TouchableOpacity 
+            style={styles.completeButton}
+            onPress={handleCompleteTraining}
+          >
+            <Text style={styles.completeButtonText}>Complete Training</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Ionicons name="calendar" size={24} color="#9C27B0" />
-          <Text style={styles.cardTitle}>Nutrition Goals</Text>
-        </View>
-        <Text style={[styles.metric, styles.purpleMetric]}>0%</Text>
-        <Text style={styles.metricLabel}>Weekly adherence</Text>
+      {/* Calendar */}
+      <View style={styles.calendarContainer}>
+        <Text style={styles.sectionTitle}>History</Text>
+        <Calendar
+          theme={{
+            backgroundColor: 'transparent',
+            calendarBackground: 'transparent',
+            textSectionTitleColor: '#fff',
+            selectedDayBackgroundColor: '#304FFE',
+            selectedDayTextColor: '#fff',
+            todayTextColor: '#304FFE',
+            dayTextColor: '#fff',
+            textDisabledColor: 'rgba(255, 255, 255, 0.3)',
+            monthTextColor: '#fff',
+            arrowColor: '#fff',
+          }}
+          markedDates={{
+            // Add your marked dates here
+            '2024-02-07': { marked: true, dotColor: '#4CAF50' },
+          }}
+        />
       </View>
-
-      <View style={styles.overviewSection}>
-        <Text style={styles.sectionTitle}>Weekly Overview</Text>
-        {/* Add weekly overview content here */}
-      </View>
-
-      {/* Bottom Tab Navigation */}
-      <View style={styles.tabBar}>
-        <View style={styles.tabItem}>
-          <Ionicons name="home" size={24} color="#4FC3F7" />
-          <Text style={[styles.tabLabel, styles.tabLabelActive]}>Home</Text>
-        </View>
-        <View style={styles.tabItem}>
-          <Ionicons name="barbell-outline" size={24} color="rgba(255, 255, 255, 0.6)" />
-          <Text style={styles.tabLabel}>Training</Text>
-        </View>
-        <View style={styles.tabItem}>
-          <Ionicons name="restaurant-outline" size={24} color="rgba(255, 255, 255, 0.6)" />
-          <Text style={styles.tabLabel}>Nutrition</Text>
-        </View>
-      </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 
@@ -61,78 +121,79 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1a237e',
+  },
+  header: {
     padding: 16,
+    paddingTop: 24,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 24,
   },
-  card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  indicators: {
+    padding: 16,
+    gap: 16,
+  },
+  indicatorCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 16,
     padding: 16,
-    marginBottom: 16,
-  },
-  cardHeader: {
-    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
-  cardTitle: {
+  indicatorTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-    marginLeft: 8,
+    marginBottom: 16,
   },
-  metric: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    marginBottom: 4,
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(79, 195, 247, 0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginTop: 16,
+    gap: 8,
   },
-  blueMetric: {
+  addButtonText: {
     color: '#4FC3F7',
+    fontSize: 14,
+    fontWeight: '500',
   },
-  greenMetric: {
-    color: '#4CAF50',
+  trainingCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
-  purpleMetric: {
-    color: '#9C27B0',
-  },
-  metricLabel: {
-    color: 'rgba(255, 255, 255, 0.6)',
+  trainingText: {
     fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.8)',
+    marginBottom: 16,
   },
-  overviewSection: {
-    marginTop: 24,
+  completeButton: {
+    backgroundColor: '#304FFE',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  completeButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  calendarContainer: {
+    padding: 16,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 16,
-  },
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    borderRadius: 16,
-    position: 'absolute',
-    bottom: 16,
-    left: 16,
-    right: 16,
-  },
-  tabItem: {
-    alignItems: 'center',
-  },
-  tabLabel: {
-    color: 'rgba(255, 255, 255, 0.6)',
-    marginTop: 4,
-    fontSize: 12,
-  },
-  tabLabelActive: {
-    color: '#4FC3F7',
   },
 });
