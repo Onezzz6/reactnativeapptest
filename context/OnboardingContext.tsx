@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 
-type OnboardingData = {
+export type OnboardingData = {
   gender?: string;
   age?: number;
   height?: number;
