@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -22,16 +23,9 @@ export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage)
 });
 
-// Initialize Firestore with offline persistence
+// Initialize Firestore
 export const db = getFirestore(app);
 
-// Enable offline persistence
-if (process.env.NODE_ENV !== 'test') {
-  enableIndexedDbPersistence(db).catch((err) => {
-    if (err.code === 'failed-precondition') {
-      console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-    } else if (err.code === 'unimplemented') {
-      console.warn('The current browser doesn\'t support persistence.');
-    }
-  });
-} 
+// Note: We're removing the IndexedDB persistence since it's not fully supported
+// in all React Native environments. Instead, we'll rely on the default
+// memory cache for Firestore. 
