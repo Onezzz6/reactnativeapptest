@@ -1,24 +1,27 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useRecovery } from '../../context/RecoveryContext';
 import { useTraining } from '../../context/TrainingContext';
+import { useNutrition } from '../../context/NutritionContext';
 import { Ionicons } from '@expo/vector-icons';
 import CircularProgress from 'react-native-circular-progress-indicator';
 import { useState, useEffect } from 'react';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from '../../config/firebase';
 import LogMealModal from '../../components/LogMealModal';
-import { useNutrition } from '../../context/NutritionContext';
 
 export default function HomeScreen() {
   const { recoveryScore } = useRecovery();
   const { activePlan, selectedDate, setSelectedDate } = useTraining();
+  const { dailyNutrition, nutritionGoals } = useNutrition();
   const [currentWeek, setCurrentWeek] = useState<Date[]>([]);
-  const [calorieIntake, setCalorieIntake] = useState(1575);
-  const [dailyCalorieGoal] = useState(2500);
   const [username, setUsername] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [logMealVisible, setLogMealVisible] = useState(false);
-  const { dailyNutrition, nutritionGoals } = useNutrition();
+
+  const calorieGoal = nutritionGoals.dailyCalories;
+  const consumedCalories = dailyNutrition.totalCalories;
+  const remainingCalories = calorieGoal - consumedCalories;
+  const percentage = Math.min((consumedCalories / calorieGoal) * 100, 100);
 
   useEffect(() => {
     generateWeekDays();
@@ -106,20 +109,62 @@ export default function HomeScreen() {
         </View>
         <View style={styles.calorieCard}>
           <CircularProgress
-            value={dailyNutrition.totalCalories}
-            maxValue={nutritionGoals.dailyCalories}
+            value={consumedCalories}
+            maxValue={calorieGoal}
             radius={80}
             duration={1000}
             progressValueColor={'#304FFE'}
-            title="Kcal"
-            titleColor={'#666'}
-            titleStyle={{ fontSize: 14 }}
-            activeStrokeColor={'#304FFE'}
+            progressValueStyle={{ display: 'none' }}
+            title={consumedCalories.toString()}
+            titleColor={'#000'}
+            titleStyle={{ 
+              fontSize: 32, 
+              fontWeight: 'bold',
+              textAlign: 'center'
+            }}
+            subtitle={'kcal consumed'}
+            subtitleColor={'#666'}
+            subtitleStyle={{ 
+              fontSize: 16,
+              marginTop: -8 
+            }}
             inActiveStrokeColor={'#E8EAF6'}
+            activeStrokeColor={'#FF9800'}
             inActiveStrokeOpacity={0.2}
-            progressValueStyle={{ fontSize: 32, fontWeight: 'bold', color: '#000' }}
           />
-          <Text style={styles.calorieSubtitle}>Current Day Intake</Text>
+          <View style={styles.calorieStats}>
+            <View style={styles.calorieStat}>
+              <Text style={styles.statLabel}>Daily Goal</Text>
+              <View style={styles.statRow}>
+                <Text style={styles.statNumber}>{calorieGoal}</Text>
+                <Text style={styles.statUnit}>kcal</Text>
+              </View>
+            </View>
+            <View style={styles.calorieStat}>
+              <Text style={styles.statLabel}>Consumed</Text>
+              <View style={styles.statRow}>
+                <Text style={styles.statNumber}>{consumedCalories}</Text>
+                <Text style={styles.statUnit}>kcal</Text>
+              </View>
+            </View>
+            <View style={styles.calorieStat}>
+              <Text style={styles.statLabel}>Remaining</Text>
+              <View style={styles.statRow}>
+                <Text style={[
+                  styles.statNumber,
+                  remainingCalories < 0 ? styles.overBudget : null
+                ]}>
+                  {Math.abs(remainingCalories)}
+                </Text>
+                <Text style={[
+                  styles.statUnit,
+                  remainingCalories < 0 ? styles.overBudget : null
+                ]}>
+                  kcal{remainingCalories < 0 ? ' over' : ''}
+                </Text>
+              </View>
+            </View>
+          </View>
         </View>
       </View>
 
@@ -205,6 +250,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+  sectionSubtitle: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.7)',
+    marginTop: 2,
+  },
   addButton: {
     backgroundColor: '#304FFE',
     paddingHorizontal: 12,
@@ -221,10 +271,40 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: 'center',
   },
-  calorieSubtitle: {
-    color: '#666',
-    marginTop: 8,
+  calorieStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  calorieStat: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statLabel: {
     fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  statNumber: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  statRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  statUnit: {
+    fontSize: 12,
+    color: '#666',
+  },
+  overBudget: {
+    color: '#FF5252',
   },
   calendar: {
     flexDirection: 'row',
