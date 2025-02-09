@@ -6,6 +6,8 @@ import CircularProgress from 'react-native-circular-progress-indicator';
 import { useState, useEffect } from 'react';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from '../../config/firebase';
+import LogMealModal from '../../components/LogMealModal';
+import { useNutrition } from '../../context/NutritionContext';
 
 export default function HomeScreen() {
   const { recoveryScore } = useRecovery();
@@ -15,6 +17,8 @@ export default function HomeScreen() {
   const [dailyCalorieGoal] = useState(2500);
   const [username, setUsername] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [logMealVisible, setLogMealVisible] = useState(false);
+  const { dailyNutrition, nutritionGoals } = useNutrition();
 
   useEffect(() => {
     generateWeekDays();
@@ -61,7 +65,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <View style={styles.logoCircle}>
-            <Ionicons name="football-outline" size={24} color="#4FC3F7" />
+            <Ionicons name="football-outline" size={28} color="#4FC3F7" />
           </View>
           <Text style={styles.logoText}>BallerAI</Text>
         </View>
@@ -79,7 +83,7 @@ export default function HomeScreen() {
               />
             ) : (
               <View style={[styles.profileImage, styles.profilePlaceholder]}>
-                <Ionicons name="person-outline" size={20} color="white" />
+                <Ionicons name="person-outline" size={24} color="white" />
               </View>
             )}
           </TouchableOpacity>
@@ -93,14 +97,17 @@ export default function HomeScreen() {
             <Ionicons name="nutrition-outline" size={24} color="white" />
             <Text style={styles.sectionTitle}>Nutrition Progress</Text>
           </View>
-          <TouchableOpacity style={styles.addButton}>
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={() => setLogMealVisible(true)}
+          >
             <Text style={styles.addButtonText}>+ Log a Meal</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.calorieCard}>
           <CircularProgress
-            value={calorieIntake}
-            maxValue={dailyCalorieGoal}
+            value={dailyNutrition.totalCalories}
+            maxValue={nutritionGoals.dailyCalories}
             radius={80}
             duration={1000}
             progressValueColor={'#304FFE'}
@@ -165,6 +172,11 @@ export default function HomeScreen() {
           </View>
         </View>
       )}
+
+      <LogMealModal 
+        visible={logMealVisible}
+        onClose={() => setLogMealVisible(false)}
+      />
     </ScrollView>
   );
 }
@@ -264,25 +276,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 48,
-    paddingBottom: 16,
+    paddingHorizontal: 20,
+    paddingTop: 52,
+    paddingBottom: 20,
   },
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
   logoCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoText: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 'bold',
     color: 'white',
     letterSpacing: 0.5,
@@ -290,18 +302,18 @@ const styles = StyleSheet.create({
   profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
   },
   username: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '500',
-    marginRight: 8,
+    marginRight: 10,
   },
   profileImage: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   profilePlaceholder: {
