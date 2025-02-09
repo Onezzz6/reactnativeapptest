@@ -15,15 +15,18 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
+import * as ImagePicker from 'expo-image-picker';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function WelcomeScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSignUp = async () => {
-    if (!email || !password) {
+    if (!email || !password || !username) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -37,8 +40,10 @@ export default function WelcomeScreen() {
       // Create user profile document
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
+        username: username,
         createdAt: serverTimestamp(),
         onboardingComplete: false,
+        photoURL: null,
       });
 
       // Navigate to onboarding
@@ -85,6 +90,19 @@ export default function WelcomeScreen() {
         </Text>
 
         <View style={styles.form}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Username</Text>
+            <TextInput
+              style={styles.input}
+              value={username}
+              onChangeText={setUsername}
+              placeholder="Enter your username"
+              placeholderTextColor="rgba(255, 255, 255, 0.5)"
+              autoCapitalize="none"
+              editable={!loading}
+            />
+          </View>
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Email</Text>
             <TextInput
